@@ -102,11 +102,13 @@ public class TwoViewPager extends ViewGroup {
             case MotionEvent.ACTION_UP:
                 velocityTracker.computeCurrentVelocity(1000, maxVelocity);
                 float vx = velocityTracker.getXVelocity();
-                int scrollX = getScrollX();
+                int scrollX = getScrollX();//这个值是第一个子View左边距离父View的值，初始值是0，随着向右滑动，当滑到第二个子View时，该值为第一个子View的宽度。
                 int targetPage;
                 if (Math.abs(vx) < minVelocity) {
+                    //手指正常抬起
                     targetPage = scrollX > getWidth() / 2 ? 1 : 0;
                 } else {
+                    //手指快速惯性滑动
                     targetPage = vx < 0 ? 1 : 0;
                 }
                 int scrollDistance = targetPage == 1 ? (getWidth() - scrollX) : -scrollX;
