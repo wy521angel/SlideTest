@@ -30,6 +30,9 @@ public class Activity0 extends Activity {
             case 5:
                 setContentView(R.layout.activity_for_drag5);
                 break;
+            case 6:
+                setContentView(R.layout.activity_for_twoviewpager);
+                break;
         }
 
     }

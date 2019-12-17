@@ -12,12 +12,14 @@ import android.widget.ListView;
 
 public class MainActivity extends ListActivity {
 
-    private String[] labels = new String[]{"layout方法，视图坐标方式", "layout方法，绝对坐标方式", "offset方法", "LayoutParams方法", "scrollBy方法", "scroller方法"};
+    private String[] labels = new String[]{"layout方法，视图坐标方式", "layout方法，绝对坐标方式", "offset方法",
+            "LayoutParams方法", "scrollBy方法", "scroller方法","TwoViewPager测试"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, labels);
+        ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+                labels);
         getListView().setAdapter(adapter);
     }
 
@@ -42,6 +44,9 @@ public class MainActivity extends ListActivity {
                 break;
             case 5:
                 startActivity(new Intent(this, Activity0.class).putExtra("label", 5));
+                break;
+            case 6:
+                startActivity(new Intent(this, Activity0.class).putExtra("label", 6));
                 break;
         }
     }
