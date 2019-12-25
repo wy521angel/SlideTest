@@ -33,6 +33,9 @@ public class Activity0 extends Activity {
             case 6:
                 setContentView(R.layout.activity_for_twoviewpager);
                 break;
+            case 7:
+                setContentView(R.layout.activity_for_two_scrollview);
+                break;
         }
 
     }
