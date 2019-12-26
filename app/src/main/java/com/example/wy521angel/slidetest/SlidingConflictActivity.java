@@ -31,9 +31,9 @@ public class SlidingConflictActivity extends ListActivity {
             case 1:
                 startActivity(new Intent(this, DemoActivity.class));
                 break;
-//            case 2:
-//                startActivity(new Intent(this, DemoActivity2.class));
-//                break;
+            case 2:
+                startActivity(new Intent(this, DemoActivity2.class));
+                break;
         }
     }
 }
