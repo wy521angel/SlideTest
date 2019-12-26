@@ -1,9 +1,12 @@
 package com.example.wy521angel.slidetest;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.WindowManager;
 
 public class Utils {
 
@@ -28,5 +31,12 @@ public class Utils {
         options.inDensity = options.outWidth;
         options.inTargetDensity = density;
         return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    public static DisplayMetrics getScreenMetrics(Context context) {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        DisplayMetrics dm = new DisplayMetrics();
+        wm.getDefaultDisplay().getMetrics(dm);
+        return dm;
     }
 }

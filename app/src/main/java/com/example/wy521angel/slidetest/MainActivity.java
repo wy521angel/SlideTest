@@ -2,7 +2,9 @@ package com.example.wy521angel.slidetest;
 
 import android.app.ListActivity;
 import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,7 +14,7 @@ import android.widget.ListView;
 public class MainActivity extends ListActivity {
 
     private String[] labels = new String[]{"layout方法，视图坐标方式", "layout方法，绝对坐标方式", "offset方法",
-            "LayoutParams方法", "scrollBy方法", "scroller方法","TwoViewPager测试","两个ScrollView嵌套的滑动冲突"};
+            "LayoutParams方法", "scrollBy方法", "scroller方法", "TwoViewPager测试", "滑动冲突"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class MainActivity extends ListActivity {
                 startActivity(new Intent(this, Activity0.class).putExtra("label", 6));
                 break;
             case 7:
-                startActivity(new Intent(this, Activity0.class).putExtra("label", 7));
+                startActivity(new Intent(this, SlidingConflictActivity.class));
                 break;
         }
     }
