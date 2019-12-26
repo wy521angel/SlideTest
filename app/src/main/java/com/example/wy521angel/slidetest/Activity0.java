@@ -3,9 +3,6 @@ package com.example.wy521angel.slidetest;
 import android.app.Activity;
 import android.os.Bundle;
 
-/**
- * Created by wy521angel on 16/8/1.
- */
 public class Activity0 extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +32,9 @@ public class Activity0 extends Activity {
                 break;
             case 7:
                 setContentView(R.layout.activity_for_two_scrollview);
+                break;
+            case 8:
+                setContentView(R.layout.nested_scalable_image_view);
                 break;
         }
 

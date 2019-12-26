@@ -10,6 +10,8 @@ import android.graphics.Paint;
 import androidx.annotation.Nullable;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.core.view.NestedScrollingChild2;
+import androidx.core.view.NestedScrollingChildHelper;
+import androidx.core.view.ViewCompat;
 
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,7 +21,7 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.OverScroller;
 
-public class ScalableImageView extends View implements NestedScrollingChild2 {
+public class NestedScalableImageView extends View implements NestedScrollingChild2 {
 
     private static final float IMAGE_WIDTH = Utils.dp2px(300);
     private static final float OVER_SCALE_FACTOR = 1.5f;//图片撑满屏幕之后再放大的额外系数
@@ -47,8 +49,9 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
     private ViewBaseGestureListener viewBaseGestureListener =
             new ViewBaseGestureListener();
     private ViewScaleGestureListener viewScaleGestureListener = new ViewScaleGestureListener();
+    private NestedScrollingChildHelper childHelper;
 
-    public ScalableImageView(Context context, @Nullable AttributeSet attrs) {
+    public NestedScalableImageView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         gestureDetectorCompat = new GestureDetectorCompat(context,
                 viewBaseGestureListener);
@@ -56,6 +59,8 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
         bitmap = Utils.getBitmapByDrawableResources(getResources(), R.drawable.gem,
                 (int) IMAGE_WIDTH);
         scaleGestureDetector = new ScaleGestureDetector(context, viewScaleGestureListener);
+        childHelper = new NestedScrollingChildHelper(this);
+        childHelper.setNestedScrollingEnabled(true);
     }
 
     @Override
@@ -80,6 +85,7 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
         boolean result = scaleGestureDetector.onTouchEvent(event);
         if (!scaleGestureDetector.isInProgress()) {//如果双指没有发生捏撑操作，使用单指触摸
             result = gestureDetectorCompat.onTouchEvent(event);
+            childHelper.startNestedScroll(ViewCompat.SCROLL_AXIS_VERTICAL);
         }
         return result;
     }
@@ -98,8 +104,9 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
     }
 
     public void setCurrentScale(float currentScale) {
-        invalidate();
         this.currentScale = currentScale;
+        invalidate();
+
     }
 
     private ObjectAnimator getAnimator() {
@@ -110,39 +117,33 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
         return scaleAnimator;
     }
 
-    private void fixOffsets() {
-        offsetX = Math.min(offsetX, (bitmap.getWidth() * bigScale - getWidth()) / 2);
-        offsetX = Math.max(offsetX, -(bitmap.getWidth() * bigScale - getWidth()) / 2);
-        offsetY = Math.min(offsetY, (bitmap.getHeight() * bigScale - getHeight()) / 2);
-        offsetY = Math.max(offsetY, -(bitmap.getHeight() * bigScale - getHeight()) / 2);
-    }
-
     @Override
     public boolean startNestedScroll(int axes, int type) {
-        return false;
+        return childHelper.startNestedScroll(axes, type);
     }
 
     @Override
     public void stopNestedScroll(int type) {
-
+        childHelper.stopNestedScroll(type);
     }
 
     @Override
     public boolean hasNestedScrollingParent(int type) {
-        return false;
+        return childHelper.hasNestedScrollingParent(type);
     }
 
     @Override
     public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed,
                                         int dyUnconsumed, @Nullable int[] offsetInWindow,
                                         int type) {
-        return false;
+        return childHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed,
+                dyUnconsumed, offsetInWindow, type);
     }
 
     @Override
     public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed,
                                            @Nullable int[] offsetInWindow, int type) {
-        return false;
+        return childHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type);
     }
 
     class ViewBaseGestureListener implements GestureDetector.OnGestureListener,
@@ -174,8 +175,12 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
                 //二者差值的一半就是图片移动的最大范围
                 offsetX -= distanceX;
                 offsetY -= distanceY;
-                fixOffsets();
-                invalidate();
+                int unconsumed = fixOffsets();
+                if (unconsumed != 0) {
+                    childHelper.dispatchNestedScroll(0, 0, 0, unconsumed, null);
+                } else {
+                    invalidate();
+                }
             }
             return false;
         }
@@ -194,7 +199,7 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
                         -(int) (bitmap.getWidth() * bigScale - getWidth()) / 2,
                         (int) (bitmap.getWidth() * bigScale - getWidth()) / 2,
                         -(int) (bitmap.getHeight() * bigScale - getHeight()) / 2,
-                        (int) (bitmap.getHeight() * bigScale - getHeight()) / 2, 100, 100);
+                        (int) (bitmap.getHeight() * bigScale - getHeight()) / 2);
                 //下一帧到来时刷新
                 postOnAnimation(flingRunner);
             }
@@ -216,6 +221,7 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
                         (e.getX() - getWidth() / 2f) * bigScale / smallScale;//双击放大后的偏移量
                 offsetY = (e.getY() - getHeight() / 2f) -//双击放大前的偏移量
                         (e.getY() - getHeight() / 2f) * bigScale / smallScale;//双击放大后的偏移量
+                fixOffsets();
                 getAnimator().start();
             } else {
                 getAnimator().reverse();
@@ -228,6 +234,20 @@ public class ScalableImageView extends View implements NestedScrollingChild2 {
             return false;
         }
 
+    }
+
+    private int fixOffsets() {
+        offsetX = Math.min(offsetX, (bitmap.getWidth() * bigScale - getWidth()) / 2);
+        offsetX = Math.max(offsetX, -(bitmap.getWidth() * bigScale - getWidth()) / 2);
+        int result = 0;
+        if (offsetY < -(bitmap.getHeight() * bigScale - getHeight()) / 2) {
+            result = (int) (-(bitmap.getHeight() * bigScale - getHeight()) / 2 - offsetY);
+        } else if (offsetY > (bitmap.getHeight() * bigScale - getHeight()) / 2) {
+            result = (int) ((bitmap.getHeight() * bigScale - getHeight()) / 2 - offsetY);
+        }
+        offsetY = Math.min(offsetY, (bitmap.getHeight() * bigScale - getHeight()) / 2);
+        offsetY = Math.max(offsetY, -(bitmap.getHeight() * bigScale - getHeight()) / 2);
+        return result;
     }
 
     class ViewScaleGestureListener implements ScaleGestureDetector.OnScaleGestureListener {

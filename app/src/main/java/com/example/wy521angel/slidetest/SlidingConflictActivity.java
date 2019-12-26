@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 public class SlidingConflictActivity extends ListActivity {
 
-    private String[] labels = new String[]{"两个ScrollView嵌套的滑动冲突", "外部拦截法", "内部拦截法","TwoViewPager测试"};
+    private String[] labels = new String[]{"两个ScrollView嵌套的滑动冲突", "外部拦截法", "内部拦截法", "可缩放的图片与滑动的嵌套"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +33,9 @@ public class SlidingConflictActivity extends ListActivity {
                 break;
             case 2:
                 startActivity(new Intent(this, DemoActivity2.class));
+                break;
+            case 3:
+                startActivity(new Intent(this, Activity0.class).putExtra("label", 8));
                 break;
         }
     }
