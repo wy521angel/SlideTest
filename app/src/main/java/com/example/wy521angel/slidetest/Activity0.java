@@ -36,6 +36,9 @@ public class Activity0 extends Activity {
             case 8:
                 setContentView(R.layout.nested_scalable_image_view);
                 break;
+            case 9:
+                setContentView(R.layout.activity_for_two_scrollview2);
+                break;
         }
 
     }
