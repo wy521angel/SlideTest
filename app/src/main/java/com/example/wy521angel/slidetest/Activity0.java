@@ -39,6 +39,9 @@ public class Activity0 extends Activity {
             case 9:
                 setContentView(R.layout.activity_for_two_scrollview2);
                 break;
+            case 10:
+                setContentView(R.layout.activity_for_two_scrollview3);
+                break;
         }
 
     }
