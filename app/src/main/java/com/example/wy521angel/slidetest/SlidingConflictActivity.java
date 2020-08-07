@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.example.wy521angel.slidetest.hover.SuspendedLayoutActivity;
+
 public class SlidingConflictActivity extends ListActivity {
 
     private String[] labels = new String[]{
@@ -16,7 +18,9 @@ public class SlidingConflictActivity extends ListActivity {
             "内部拦截法",
             "可缩放的图片与滑动的嵌套",
             "两个ScrollView嵌套的滑动冲突(重写方法解决)",
-            "两个ScrollView嵌套的滑动冲突(使用系统方法解决)"};
+            "两个ScrollView嵌套的滑动冲突(使用系统方法解决)",
+            "使用NestedScrolling实现悬停布局"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,9 @@ public class SlidingConflictActivity extends ListActivity {
                 break;
             case 5:
                 startActivity(new Intent(this, Activity0.class).putExtra("label", 10));
+                break;
+            case 6:
+                startActivity(new Intent(this, SuspendedLayoutActivity.class));
                 break;
         }
     }

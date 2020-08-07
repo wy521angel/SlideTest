@@ -19,6 +19,7 @@
         <activity android:name=".SlidingConflictActivity" />
         <activity android:name=".DemoActivity" />
         <activity android:name=".DemoActivity2" />
+        <activity android:name=".hover.SuspendedLayoutActivity"/>
     </application>
 
 </manifest>
